@@ -23,14 +23,8 @@ if url!="":
         if yt.streams.filter(only_audio=True):
             download_audio = st.button("Download Audio Only")
         if download_video:
-            high=st.button("High resolution")
-            low =st.button("Low Resolution")
-            if high:
-                video.get_highest_resolution().download(output_path=destination1)
-                downloaded = True
-            if low:
-                video.get_lowest_resolution().download(output_path=destination1)
-                downloaded = True    
+            video.get_highest_resolution().download(output_path=destination1)
+            downloaded = True    
             
         if download_audio:
             video.filter(only_audio=True).first().download(output_path=destination1)
