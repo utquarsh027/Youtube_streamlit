@@ -31,10 +31,10 @@ if url!="":
             downloaded = True
         if downloaded:
             #result
-            notification.notify(title=yt.title[0:40]+"...",
-                    message="has been successfully downloaded",
-                    timeout=2)
-            time.sleep(10)
+#             notification.notify(title=yt.title[0:40]+"...",
+#                     message="has been successfully downloaded",
+#                     timeout=2)
+#             time.sleep(10)
             st.subheader("Download Complete")
     else:
         st.subheader("Sorry, this video can not be downloaded")   
