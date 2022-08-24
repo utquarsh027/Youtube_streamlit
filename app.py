@@ -17,8 +17,6 @@ if url!="":
     video=yt.streams
     if len(video)>0:
         downloaded,download_audio=False,False
-        st.text("Enter a destination on your system to download")
-        destination1=st.text_input(label="",placeholder="Directory/Location on your computer")
         download_video = st.button("Download Video")
         if yt.streams.filter(only_audio=True):
             download_audio = st.button("Download Audio Only")
