@@ -23,11 +23,17 @@ if url!="":
         if yt.streams.filter(only_audio=True):
             download_audio = st.button("Download Audio Only")
         if download_video:
-            video.get_highest_resolution().download()
+            download_file=video.get_highest_resolution().download()
+            base,ext=os.path.splitext(download_file)
+            new_file=base
+            os.rename(download_file,new_file)
             downloaded = True    
             
         if download_audio:
-            video.filter(only_audio=True).first().download()
+            download_file1= video.filter(only_audio=True).first().download()
+            base,ext=os.path.splitext(download_file1)
+            new_file=base+'.mp3'
+            os.rename(download_file1,new_file)
             downloaded = True
         if downloaded:
             #result
