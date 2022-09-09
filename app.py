@@ -1,8 +1,10 @@
 import streamlit as st
 import time
 from plyer import notification
-from pytube import YouTube
+from pytube import YouTube,Streamquery
 import os
+import base64
+
 st.title("Youtube Video Downloader")
 st.text("")
 
@@ -25,7 +27,24 @@ if url!="":
             base,ext=os.path.splitext(download_file)
             new_file=base
             os.rename(download_file,new_file)
-            downloaded = True    
+            downloaded = True
+            if 'DESKTOP_SESSION' not in os.environ: #and os.environ('HOSTNAME')=='streamlit':
+    
+                with open(new_file, 'rb') as f:
+                    bytes = f.read()
+                    b64 = base64.b64encode(bytes).decode()
+                    href = f'<a href="data:file/zip;base64,{b64}" download=\'{new_file}\'>\
+                        Here is your link \
+                    </a>'
+                    st.markdown(href, unsafe_allow_html=True)
+                    download = st.button("Get download link", key="download")
+                    if download:
+                         download_file= video.get_lowest_resolution().download()
+                # st.download_button(label="Download Video",file_name=download_file)   
+                         base,ext=os.path.splitext(download_file)
+                         new_file=base
+                         os.rename(download_file,new_file)
+                         downloaded = True
             
         if download_audio:
             download_file1= video.filter(only_audio=True).first().download()
