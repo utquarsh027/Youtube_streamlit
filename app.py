@@ -3,7 +3,7 @@ from pytube import YouTube
 from io import BytesIO
 from pathlib import Path
 import time
-st.set_page_config(page_title="Download Video", page_icon="🎵", layout="centered", initial_sidebar_state="collapsed")
+st.set_page_config(page_title="Youtube Downloader", page_icon="🎵", layout="centered", initial_sidebar_state="collapsed")
 
 def download_video_to_buffer(url):
     buffer = BytesIO()
@@ -16,7 +16,7 @@ def download_video_to_buffer(url):
 
 def main():
     downloaded=False
-    st.title("Download video from Youtube")
+    st.title("Download from Youtube")
     url = st.text_input("Insert Youtube URL:")
     if url:
         with st.spinner("Downloading video Stream from Youtube..."):
