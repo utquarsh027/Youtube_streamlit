@@ -1,63 +1,44 @@
 import streamlit as st
+from pytube import YouTube
+from io import BytesIO
+from pathlib import Path
 import time
-from plyer import notification
-from pytube import YouTube,Streamquery
-import os
-import base64
+st.set_page_config(page_title="Download Video", page_icon="🎵", layout="centered", initial_sidebar_state="collapsed")
 
-st.title("Youtube Video Downloader")
-st.text("")
+def download_video_to_buffer(url):
+    buffer = BytesIO()
+    youtube_video = YouTube(url)
+    video = youtube_video.streams.filter(progressive=True,file_extension="mp4").order_by('resolution').desc().first()
+    video_720p=video
+    default_filename = video_720p.default_filename
+    video.stream_to_buffer(buffer)
+    return default_filename,buffer
 
-#Url input
-url=st.text_input(label="Enter url of the video you want to download",placeholder="YouTube url")
-if url!="":
-    yt=YouTube(url)
-    #getting thumbnail of the given url
-    st.image(yt.thumbnail_url, width=600)
-    st.subheader(f'''{yt.title}''')
-
-    video=yt.streams
-    if len(video)>0:
-        downloaded,download_audio=False,False
-        download_video = st.button("Download Video")
-        if yt.streams.filter(only_audio=True):
-            download_audio = st.button("Download Audio Only")
-        if download_video:
-            download_file=video.get_highest_resolution().download()
-            base,ext=os.path.splitext(download_file)
-            new_file=base
-            os.rename(download_file,new_file)
-            downloaded = True
-            if 'DESKTOP_SESSION' not in os.environ: #and os.environ('HOSTNAME')=='streamlit':
-    
-                with open(new_file, 'rb') as f:
-                    bytes = f.read()
-                    b64 = base64.b64encode(bytes).decode()
-                    href = f'<a href="data:file/zip;base64,{b64}" download=\'{new_file}\'>\
-                        Here is your link \
-                    </a>'
-                    st.markdown(href, unsafe_allow_html=True)
-                    download = st.button("Get download link", key="download")
-                    if download:
-                         download_file= video.get_lowest_resolution().download()
-                # st.download_button(label="Download Video",file_name=download_file)   
-                         base,ext=os.path.splitext(download_file)
-                         new_file=base
-                         os.rename(download_file,new_file)
-                         downloaded = True
-            
-        if download_audio:
-            download_file1= video.filter(only_audio=True).first().download()
-            base,ext=os.path.splitext(download_file1)
-            new_file=base+'.mp3'
-            os.rename(download_file1,new_file)
-            downloaded = True
-        if downloaded:
-            #result
-#             notification.notify(title=yt.title[0:40]+"...",
-#                     message="has been successfully downloaded",
-#                     timeout=2)
-#             time.sleep(10)
-            st.subheader("Download Complete")
-    else:
-        st.subheader("Sorry, this video can not be downloaded")   
+def main():
+    downloaded=False
+    st.title("Download video from Youtube")
+    url = st.text_input("Insert Youtube URL:")
+    if url:
+        with st.spinner("Downloading video Stream from Youtube..."):
+            default_filename, buffer = download_video_to_buffer(url)
+        yt=YouTube(url)    
+        st.image(yt.thumbnail_url, width=600)   
+        st.subheader("Title")
+        st.write(default_filename)
+        title_vid = Path(default_filename).with_suffix(".mp4").name
+        title_audio=Path(default_filename).with_suffix(".mp3").name
+        # st.video(buffer, format='video/mpeg')
+        st.subheader("Download File")
+        st.download_button(
+            label="Download audio",
+            data=buffer,
+            file_name=title_audio,
+            mime="audio/mpeg")
+        st.download_button(
+            label= "Download Video",
+            data=buffer,
+            file_name=title_vid,
+            mime="video/mpeg"
+        )   
+if __name__ == "__main__":
+    main()
